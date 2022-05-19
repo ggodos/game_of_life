@@ -27,10 +27,6 @@ const initGame = () => {
   cells[2][3] = true;
   cells[3][1] = true;
   cells[3][2] = true;
-  /*
-   *   cells[5][5] = true;
-   *   cells[5][6] = true;
-   *   cells[5][7] = true; */
 };
 
 const startGame = () => {
@@ -147,11 +143,14 @@ const getCoords = (e) => {
 
 initGame();
 canvas.addEventListener("mousedown", (e) => {
+  let c = getCoords(e);
   switch (e.button) {
     case 0: // left
+      cells[c.y][c.x] = true;
       isDrawing = true;
       break;
     case 2: // right
+      cells[c.y][c.x] = false;
       isErasing = true;
       break;
     default:
