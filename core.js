@@ -3,27 +3,35 @@ const ctx = canvas.getContext("2d");
 
 const HEIGHT = 600;
 const WIDTH = 800;
-const CELL_SIZE = 20;
-const CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
-const CELLS_W = Math.floor(WIDTH / CELL_SIZE);
 
-let CYCLE_MS = 250;
+let CYCLE_MS = 1000;
+let CELL_SIZE = 20;
+let CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
+let CELLS_W = Math.floor(WIDTH / CELL_SIZE);
+let wantGrid = false;
+
+const changeCellSize = (n) => {
+  CELL_SIZE = n;
+  CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
+  CELLS_W = Math.floor(WIDTH / CELL_SIZE);
+};
+
+const changeCycleSpeed = (n) => {
+  CYCLE_MS = n;
+};
 
 var cells;
-
 let gameStarted = false;
 let isDrawing = false;
 let isErasing = false;
-
-let wantGrid = true;
 
 ctx.canvas.height = HEIGHT;
 ctx.canvas.width = WIDTH;
 
 const initGame = () => {
-  cells = Array(CELLS_H);
-  for (let i = 0; i < CELLS_H; i++) {
-    cells[i] = Array(CELLS_W).fill(false);
+  cells = Array(HEIGHT);
+  for (let i = 0; i < HEIGHT; i++) {
+    cells[i] = Array(WIDTH).fill(false);
   }
   cells[1][1] = true;
   cells[2][2] = true;

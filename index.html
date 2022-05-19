@@ -14,6 +14,8 @@
 		<button type="button" onClick="stopGame()">Stop game</button>
 		<button type="button" onClick="resetGame()">Reset game</button>
 		<button type="button" onClick="switchGrid()">Grid switch</button>
+		cell size: <input type="range" min="1" max="50" onchange="changeCellSize(this.value)">
+		cycle (ms) <input type="number" onchange="changeCycleSpeed(this.value)" value="1000">
 
 		<script type="text/javascript" src="core.js"></script>
 	</body>
