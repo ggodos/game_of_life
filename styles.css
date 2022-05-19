@@ -1,11 +1,9 @@
 * {
   box-sizing: border-box;
-  margin: 0;
   padding: 0;
 }
 
 body {
-  align-content: space-between;
   background-color: #545f5f;
   color: #fbf5f3;
   display: grid;

@@ -3,16 +3,19 @@ const ctx = canvas.getContext("2d");
 
 const HEIGHT = 600;
 const WIDTH = 800;
-const CELL_SIZE = 10;
-const CELLS_H = HEIGHT / CELL_SIZE;
-const CELLS_W = WIDTH / CELL_SIZE;
-const CYCLE_MS = 250;
+const CELL_SIZE = 15;
+const CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
+const CELLS_W = Math.floor(WIDTH / CELL_SIZE);
+
+let CYCLE_MS = 250;
 
 var cells;
 
 let gameStarted = false;
 let isDrawing = false;
 let isErasing = false;
+
+let wantGrid = true;
 
 ctx.canvas.height = HEIGHT;
 ctx.canvas.width = WIDTH;
@@ -41,8 +44,8 @@ const resetGame = () => {
   initGame();
 };
 
-const printCells = () => {
-  console.log(cells);
+const switchGrid = () => {
+  wantGrid = !wantGrid;
 };
 
 const stopGame = () => {
@@ -61,6 +64,26 @@ const drawCell = (cell) => {
 const drawBackground = () => {
   ctx.fillStyle = "#201A23";
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
+};
+
+const drawGrid = () => {
+  for (let y = 0; y <= CELLS_H + 1; y++) {
+    for (let x = 0; x <= CELLS_W + 1; x++) {
+      let dy = y * CELL_SIZE;
+      let dx = x * CELL_SIZE;
+
+      ctx.beginPath();
+      ctx.moveTo(dx, dy);
+      ctx.lineTo(dx + CELL_SIZE, dy);
+      ctx.lineTo(dx + CELL_SIZE, dy - CELL_SIZE);
+      ctx.lineTo(dx, dy - CELL_SIZE);
+      ctx.moveTo(dx, dy);
+      ctx.closePath();
+
+      ctx.strokeStyle = "gray";
+      ctx.stroke();
+    }
+  }
 };
 
 const drawCells = () => {
@@ -131,6 +154,9 @@ const calcLoop = () => {
 const loop = () => {
   drawBackground();
   drawCells();
+  if (CELL_SIZE > 9 && wantGrid) {
+    drawGrid();
+  }
   window.requestAnimationFrame(loop);
 };
 
