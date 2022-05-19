@@ -1,15 +1,18 @@
-const ctx = document.querySelector("canvas").getContext("2d");
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 
 const HEIGHT = 600;
 const WIDTH = 800;
 const CELL_SIZE = 10;
 const CELLS_H = HEIGHT / CELL_SIZE;
 const CELLS_W = WIDTH / CELL_SIZE;
-const CYCLE_MS = 100;
+const CYCLE_MS = 250;
 
 var cells;
 
 let gameStarted = false;
+let isDrawing = false;
+let isErasing = false;
 
 ctx.canvas.height = HEIGHT;
 ctx.canvas.width = WIDTH;
@@ -31,8 +34,10 @@ const initGame = () => {
 };
 
 const startGame = () => {
-  gameStarted = true;
-  calcLoop();
+  if (!gameStarted) {
+    gameStarted = true;
+    calcLoop();
+  }
 };
 
 const resetGame = () => {
@@ -133,5 +138,51 @@ const loop = () => {
   window.requestAnimationFrame(loop);
 };
 
+const getCoords = (e) => {
+  let rect = e.target.getBoundingClientRect();
+  let x = Math.floor((e.clientX - rect.left) / 10);
+  let y = Math.floor((e.clientY - rect.top) / 10);
+  return { y, x };
+};
+
 initGame();
+canvas.addEventListener("mousedown", (e) => {
+  switch (e.button) {
+    case 0: // left
+      isDrawing = true;
+      break;
+    case 2: // right
+      isErasing = true;
+      break;
+    default:
+      break;
+  }
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  let c = getCoords(e);
+  if (isDrawing) {
+    cells[c.y][c.x] = true;
+  } else if (isErasing) {
+    cells[c.y][c.x] = false;
+  }
+});
+
+canvas.addEventListener("mouseup", (e) => {
+  switch (e.button) {
+    case 0: // left
+      isDrawing = false;
+      break;
+    case 2: // right
+      isErasing = false;
+      break;
+    default:
+      break;
+  }
+});
+
+canvas.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+});
+
 window.requestAnimationFrame(loop);
