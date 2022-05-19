@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 const HEIGHT = 600;
 const WIDTH = 800;
-const CELL_SIZE = 15;
+const CELL_SIZE = 20;
 const CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
 const CELLS_W = Math.floor(WIDTH / CELL_SIZE);
 
@@ -162,14 +162,15 @@ const loop = () => {
 
 const getCoords = (e) => {
   let rect = e.target.getBoundingClientRect();
-  let x = Math.floor((e.clientX - rect.left) / 10);
-  let y = Math.floor((e.clientY - rect.top) / 10);
+  let x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
+  let y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
   return { y, x };
 };
 
 initGame();
 canvas.addEventListener("mousedown", (e) => {
   let c = getCoords(e);
+  console.log(c.y, c.x);
   switch (e.button) {
     case 0: // left
       cells[c.y][c.x] = true;
