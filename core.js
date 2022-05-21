@@ -175,10 +175,22 @@ const getCoords = (e) => {
   return { y, x };
 };
 
+const disableDrawing = (e) => {
+  switch (e.button) {
+    case 0: // left
+      isDrawing = false;
+      break;
+    case 2: // right
+      isErasing = false;
+      break;
+    default:
+      break;
+  }
+};
+
 initGame();
 canvas.addEventListener("mousedown", (e) => {
   let c = getCoords(e);
-  console.log(c.y, c.x);
   switch (e.button) {
     case 0: // left
       cells[c.y][c.x] = true;
@@ -202,18 +214,8 @@ canvas.addEventListener("mousemove", (e) => {
   }
 });
 
-canvas.addEventListener("mouseup", (e) => {
-  switch (e.button) {
-    case 0: // left
-      isDrawing = false;
-      break;
-    case 2: // right
-      isErasing = false;
-      break;
-    default:
-      break;
-  }
-});
+canvas.addEventListener("mouseup", disableDrawing);
+canvas.addEventListener("mouseleave", disableDrawing);
 
 canvas.addEventListener("contextmenu", (e) => {
   e.preventDefault();
