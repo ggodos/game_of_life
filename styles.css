@@ -1,11 +1,24 @@
 * {
-  box-sizing: border-box;
   padding: 0;
+  margin: 0;
+}
+
+h3 {
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#canvas-container, #buttons {
+  width: 100%;
+  text-align: center;
+}
+
+canvas {
+  display: inline;
 }
 
 body {
-  background-color: #545f5f;
+  background-color: #282a36;
   color: #fbf5f3;
-  display: grid;
-  justify-content: center;
 }
