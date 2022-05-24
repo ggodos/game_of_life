@@ -12,21 +12,23 @@
     </div>
     <div id="buttons">
       <br />
-      <button type="button" onClick="startGame()">Start game</button>
-      <button type="button" onClick="stopGame()">Stop game</button>
-      <button type="button" onClick="resetGame()">Reset game</button>
-      <button type="button" onClick="switchGrid()">Grid switch</button>
+      <button id="btn-start" type="button">Start game</button>
+      <button id="btn-stop" type="button">Stop game</button>
+      <button id="btn-reset" type="button">Reset game</button>
+      <button id="btn-grid" type="button">Grid switch</button>
+      <br />
       cell size:
       <input
         type="range"
         min="1"
         max="50"
-        onchange="changeCellSize(this.value)"
+        onchange="applyCellSize(this.value)"
       />
+      <br />
       cycle (ms)
       <input
         type="number"
-        onchange="changeCycleSpeed(this.value)"
+        onchange="applyCycleSpeed(this.value)"
         value="1000"
       />
     </div>

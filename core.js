@@ -1,36 +1,39 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const btn_start = document.getElementById("btn-start");
+const btn_stop = document.getElementById("btn-stop");
+const btn_reset = document.getElementById("btn-reset");
+const btn_grid = document.getElementById("btn-grid");
 
 const HEIGHT = 600;
 const WIDTH = 800;
 
-let CYCLE_MS = 1000;
-let CELL_SIZE = 20;
-let CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
-let CELLS_W = Math.floor(WIDTH / CELL_SIZE);
-let wantGrid = false;
-
-const changeCellSize = (n) => {
-  CELL_SIZE = n;
-  CELLS_H = Math.floor(HEIGHT / CELL_SIZE);
-  CELLS_W = Math.floor(WIDTH / CELL_SIZE);
-};
-
-const changeCycleSpeed = (n) => {
-  CYCLE_MS = n;
-};
-
-var cells;
-let gameStarted = false;
-let isDrawing = false;
-let isErasing = false;
-
 ctx.canvas.height = HEIGHT;
 ctx.canvas.width = WIDTH;
 
+let cells;
+let cycleSpeed = 1000;
+let cellSize = 20;
+let cellsHeight = Math.floor(HEIGHT / cellSize);
+let cells_width = Math.floor(WIDTH / cellSize);
+let gameStarted = false;
+let isDrawing = false;
+let isErasing = false;
+let hasGrid = false;
+
+const applyCellSize = (n) => {
+  cellSize = n;
+  cellsHeight = Math.floor(HEIGHT / cellSize);
+  cells_width = Math.floor(WIDTH / cellSize);
+};
+
+const applyCycleSpeed = (n) => {
+  cycleSpeed = n;
+};
+
 const initGame = () => {
-  cells = Array(HEIGHT);
-  for (let i = 0; i < HEIGHT; i++) {
+  cells = Array(HEIGHT + 1);
+  for (let i = 0; i < HEIGHT + 2; i++) {
     cells[i] = Array(WIDTH).fill(false);
   }
   cells[1][1] = true;
@@ -53,7 +56,7 @@ const resetGame = () => {
 };
 
 const switchGrid = () => {
-  wantGrid = !wantGrid;
+  hasGrid = !hasGrid;
 };
 
 const stopGame = () => {
@@ -66,7 +69,7 @@ const cellCreate = (y, x) => {
 
 const drawCell = (cell) => {
   ctx.fillStyle = "green";
-  ctx.fillRect(cell.x, cell.y, CELL_SIZE, CELL_SIZE);
+  ctx.fillRect(cell.x, cell.y, cellSize, cellSize);
 };
 
 const drawBackground = () => {
@@ -75,16 +78,17 @@ const drawBackground = () => {
 };
 
 const drawGrid = () => {
-  for (let y = 0; y <= CELLS_H + 1; y++) {
-    for (let x = 0; x <= CELLS_W + 1; x++) {
-      let dy = y * CELL_SIZE;
-      let dx = x * CELL_SIZE;
+  for (let y = 0; y <= cellsHeight + 1; y++) {
+    for (let x = 0; x <= cells_width + 1; x++) {
+      let dy = y * cellSize;
+      let dx = x * cellSize;
 
+      // Draw cell border
       ctx.beginPath();
       ctx.moveTo(dx, dy);
-      ctx.lineTo(dx + CELL_SIZE, dy);
-      ctx.lineTo(dx + CELL_SIZE, dy - CELL_SIZE);
-      ctx.lineTo(dx, dy - CELL_SIZE);
+      ctx.lineTo(dx + cellSize, dy);
+      ctx.lineTo(dx + cellSize, dy - cellSize);
+      ctx.lineTo(dx, dy - cellSize);
       ctx.moveTo(dx, dy);
       ctx.closePath();
 
@@ -95,10 +99,10 @@ const drawGrid = () => {
 };
 
 const drawCells = () => {
-  for (let y = 0; y < CELLS_H; y++)
-    for (let x = 0; x < CELLS_W; x++)
+  for (let y = 0; y < cellsHeight; y++)
+    for (let x = 0; x < cells_width; x++)
       if (cells[y][x]) {
-        drawCell(cellCreate(y * CELL_SIZE, x * CELL_SIZE));
+        drawCell(cellCreate(y * cellSize, x * cellSize));
       }
 };
 
@@ -118,28 +122,28 @@ const calculateCells = () => {
         { ny: y + 1, nx: x - 1 },
         { ny: y + 1, nx: x + 1 },
       ];
-      var live_neighbours = 0;
+      var liveNeighbours = 0;
       for (var i = 0; i < newCoords.length; i++) {
         let ny = newCoords[i].ny;
         let nx = newCoords[i].nx;
         if (
           ny < 0 ||
-          ny >= CELLS_H ||
+          ny >= cellsHeight ||
           nx < 0 ||
-          nx >= CELLS_W ||
+          nx >= cells_width ||
           (ny == y && nx == x)
         ) {
           continue;
         }
-        live_neighbours += tmpCells[ny][nx];
+        liveNeighbours += tmpCells[ny][nx];
       }
-      if (cells[y][x] && live_neighbours == 2) {
+      if (cells[y][x] && liveNeighbours == 2) {
         // Survive
         cells[y][x] = true;
-      } else if (live_neighbours == 3) {
+      } else if (liveNeighbours == 3) {
         // Born
         cells[y][x] = true;
-      } else if (live_neighbours < 2 || live_neighbours > 3) {
+      } else if (liveNeighbours < 2 || liveNeighbours > 3) {
         // Die
         cells[y][x] = false;
       }
@@ -156,13 +160,13 @@ const calcLoop = () => {
     calculateCells();
 
     calcLoop();
-  }, CYCLE_MS);
+  }, cycleSpeed);
 };
 
 const loop = () => {
   drawBackground();
   drawCells();
-  if (CELL_SIZE > 9 && wantGrid) {
+  if (cellSize > 9 && hasGrid) {
     drawGrid();
   }
   window.requestAnimationFrame(loop);
@@ -170,8 +174,8 @@ const loop = () => {
 
 const getCoords = (e) => {
   let rect = e.target.getBoundingClientRect();
-  let x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
-  let y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
+  let x = Math.floor((e.clientX - rect.left) / cellSize);
+  let y = Math.floor((e.clientY - rect.top) / cellSize);
   return { y, x };
 };
 
@@ -220,5 +224,10 @@ canvas.addEventListener("mouseleave", disableDrawing);
 canvas.addEventListener("contextmenu", (e) => {
   e.preventDefault();
 });
+
+btn_start.onclick = startGame;
+btn_stop.onclick = stopGame;
+btn_reset.onclick = resetGame;
+btn_grid.onclick = switchGrid;
 
 window.requestAnimationFrame(loop);
