@@ -8,6 +8,10 @@ const btn_grid = document.getElementById("btn-grid");
 const HEIGHT = 600;
 const WIDTH = 800;
 
+const backgroundColor = "#201A23";
+const liveCellColor = "green";
+const gridColor = "grey";
+
 ctx.canvas.height = HEIGHT;
 ctx.canvas.width = WIDTH;
 
@@ -36,11 +40,6 @@ const initGame = () => {
   for (let i = 0; i < HEIGHT + 2; i++) {
     cells[i] = Array(WIDTH).fill(false);
   }
-  cells[1][1] = true;
-  cells[2][2] = true;
-  cells[2][3] = true;
-  cells[3][1] = true;
-  cells[3][2] = true;
 };
 
 const startGame = () => {
@@ -68,12 +67,12 @@ const cellCreate = (y, x) => {
 };
 
 const drawCell = (cell) => {
-  ctx.fillStyle = "green";
+  ctx.fillStyle = liveCellColor;
   ctx.fillRect(cell.x, cell.y, cellSize, cellSize);
 };
 
 const drawBackground = () => {
-  ctx.fillStyle = "#201A23";
+  ctx.fillStyle = backgroundColor;
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 };
 
@@ -92,7 +91,7 @@ const drawGrid = () => {
       ctx.moveTo(dx, dy);
       ctx.closePath();
 
-      ctx.strokeStyle = "gray";
+      ctx.strokeStyle = gridColor;
       ctx.stroke();
     }
   }
@@ -107,7 +106,7 @@ const drawCells = () => {
 };
 
 const calculateCells = () => {
-  var tmpCells = cells.map(function (arr) {
+  var tmpCells = cells.map((arr) => {
     return arr.slice();
   });
   for (var y = 0; y < tmpCells.length; y++) {
@@ -187,13 +186,10 @@ const disableDrawing = (e) => {
     case 2: // right
       isErasing = false;
       break;
-    default:
-      break;
   }
 };
 
-initGame();
-canvas.addEventListener("mousedown", (e) => {
+const startDrawing = (e) => {
   let c = getCoords(e);
   switch (e.button) {
     case 0: // left
@@ -204,23 +200,24 @@ canvas.addEventListener("mousedown", (e) => {
       cells[c.y][c.x] = false;
       isErasing = true;
       break;
-    default:
-      break;
   }
-});
+};
 
-canvas.addEventListener("mousemove", (e) => {
+const drawing = (e) => {
   let c = getCoords(e);
   if (isDrawing) {
     cells[c.y][c.x] = true;
   } else if (isErasing) {
     cells[c.y][c.x] = false;
   }
-});
+};
+
+initGame();
+canvas.addEventListener("mousedown", startDrawing);
+canvas.addEventListener("mousemove", drawing);
 
 canvas.addEventListener("mouseup", disableDrawing);
 canvas.addEventListener("mouseleave", disableDrawing);
-
 canvas.addEventListener("contextmenu", (e) => {
   e.preventDefault();
 });
